@@ -1,0 +1,18 @@
+PREFIX cex: <http://purl.org/weso/ontology/computex#> 
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
+PREFIX wi-index: <http://data.webfoundation.org/webindex/v2013/index/> 
+PREFIX wf-onto: <http://data.webfoundation.org/ontology/> 
+
+SELECT * WHERE {
+ ?country a wf-onto:Country ;
+    rdfs:label ?countryName ;
+	wf-onto:has-iso-alpha2-code ?code2 ;
+	wf-onto:has-iso-alpha3-code ?code3 
+	.
+ ?obs wf-onto:ref-area ?country ;
+      wf-onto:ref-year 2013 ;
+	  cex:indicator wi-index:index ;
+	  cex:computation [ a cex:Score ] ;
+      cex:value ?score .
+}
+ORDER BY ASC(?code3)

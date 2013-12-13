@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+.chart rect {
+  fill: steelblue;
+}
+
+.chart rect:hover {
+  fill: brown;
+}
+
+.chart text {
+  fill: steelblue;
+  font: 10px sans-serif;
+  text-anchor: end;
+}
+
+</style>
+<body>
+<h1>Bar chart from WebIndex</h1>
+<svg class="chart"></svg>
+
+<script type="text/javascript" src="d3.js"></script>
+<script>
+  
+var width = 600,
+    barHeight = 20,
+	xDelta = 20 ;
+
+var x = d3.scale.linear()
+    .range([0, width - xDelta]);
+
+var chart = d3.select(".chart")
+    .attr("width", width);
+
+d3.json("countriesJson.php", function(error, data) {
+  console.log("Before loading data...");
+  if (error) {
+		console.log("Error loading data!" + error)
+  }	else {
+  console.log("Data loaded ok with " + data.length + " entries");
+  x.domain([0, d3.max(data, function(d) { return d.score; })]);
+
+  chart.attr("width",width + 100)
+  chart.attr("height", barHeight * data.length);
+
+  var bar = chart.selectAll("g")
+      .data(data)
+      .enter().append("g")
+      .attr("transform", function(d, i) { return "translate(" + 3*xDelta + "," + i * barHeight + ")"; });
+
+  bar.append("text")
+      .attr("class","countryCode")
+      .attr("x", -5)
+      .attr("y", barHeight / 2)
+      .attr("dy", ".35em")
+      .text(function(d) { return d.code; });
+
+  bar.append("rect")
+      .attr("width", function(d) { return x(d.score); })
+      .attr("height", barHeight - 1);
+
+  bar.append("text")
+      .attr("x", function(d) { return x(d.score) + 2*xDelta ; })
+      .attr("y", barHeight / 2)
+      .attr("dy", ".35em")
+      .text(function(d) { return d.score.toFixed(2); });
+ }
+});
+
+</script>
+</body>
